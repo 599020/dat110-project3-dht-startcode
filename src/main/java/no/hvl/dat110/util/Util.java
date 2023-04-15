@@ -45,9 +45,26 @@ public class Util {
 		
 		// Task: given an identifier, id: check whether pred < id <= node
 		
-		return false;
+		
+		// Ensure that the interval is circular (i.e., upper can be less than lower)
+		// Calculate the number of bits in the identifier
+		int numBits = id.bitLength();
+	    BigInteger maxValue = BigInteger.valueOf(2).pow(numBits);
 
+	    if (upper.compareTo(lower) < 0) {
+	        upper = upper.add(maxValue);
+	        if (id.compareTo(lower) < 0) {
+	            id = id.add(maxValue);
+	        }
+	    }
+
+	    return id.compareTo(lower) > 0 && id.compareTo(upper) <= 0;
 	}
+		
+		
+		
+
+	
 	
 	public static List<String> toString(List<NodeInterface> list) throws RemoteException {
 		List<String> nodestr = new ArrayList<String>();

@@ -1,6 +1,8 @@
 package no.hvl.dat110.middleware;
 
 import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -127,7 +129,19 @@ public class Node extends UnicastRemoteObject implements NodeInterface {
 	@Override
 	public NodeInterface findSuccessor(BigInteger key) throws RemoteException {
 		// ask this node to find the successor of key
-		return lookup.findSuccessor(key);
+		try {
+			return lookup.findSuccessor(key);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return predecessor;
 	}
 	
 	//@Override

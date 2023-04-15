@@ -65,8 +65,15 @@ public class FileManager {
 		// hash the replica
 		
 		// store the hash in the replicafiles array.
+		
+		 // get the filename without the extension
+		replicafiles = new BigInteger[numReplicas];
+	    for (int i = 0; i < numReplicas; i++) {
+	        String replicaName = filename + i;
+	        BigInteger replicaHash = Hash.hashOf(replicaName);
+	        replicafiles[i] = replicaHash;
+	    }
 	}
-	
     /**
      * 
      * @param bytesOfFile
@@ -95,6 +102,31 @@ public class FileManager {
 		// implement a logic to decide if this successor should be assigned as the primary for the file
     	
     	// call the saveFileContent() on the successor and set isPrimary=true if logic above is true otherwise set isPrimary=false
+    	
+    	// Task1: Given a filename, make replicas and distribute them to all active peers such that: pred < replica <= peer
+
+    	// create replicas of the filename
+        createReplicaFiles();
+    	
+        // iterate over the replicas
+        for (int i = 0; i < numReplicas; i++) {
+        	
+            BigInteger replica = replicafiles[i];
+            
+            // for each replica, find its successor (peer/node) by performing findSuccessor(replica)
+            NodeInterface successor = chordnode.findSuccessor(replica);
+            
+            // call the addKey on the successor and add the replica
+            successor.addKey(replica);
+            
+            // assign the primary peer to the replica with primaryIndex
+            boolean isPrimary = i == primaryIndex;
+            
+            // call the saveFileContent() on the successor and set isPrimary=true if it is the primary, otherwise set isPrimary=false
+            successor.saveFileContent(filename, replica, bytesOfFile, isPrimary);
+            
+            counter++;
+        }
     	
     	// increment counter
 		return counter;
